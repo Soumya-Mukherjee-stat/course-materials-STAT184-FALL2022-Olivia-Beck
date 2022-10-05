@@ -37,7 +37,7 @@ library(dcData)
 
 ## Midterm 
 
-- October 24th (Friday) during class 
+- October 21st (Friday) during class 
 - On paper 
 - Anything we have done in class before then is fair game for questions
 - This is not going to be a difficult exam. It will cover material from `tidyverse` functions and GitHub workflows. 
