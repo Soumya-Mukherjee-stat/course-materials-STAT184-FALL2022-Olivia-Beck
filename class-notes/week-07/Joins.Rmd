@@ -93,6 +93,7 @@ GlyphReady <- data.frame(letters = c(rep("A", 100), rep("B", 100)),
 GlyphReady %>%
   sample_n(10)
 
+
 GlyphReady %>%
   ggplot(aes(x = numbers)) +
   geom_histogram()+
