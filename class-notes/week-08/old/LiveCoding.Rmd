@@ -1,0 +1,192 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+
+```{r}
+# clean up 
+rm(list = ls())
+
+# load necessary packages
+library(tidyverse)  # includes ggplot2
+library(dcData)
+library(mosaic)
+
+# data intake
+data("BabyNames", package = "dcData")
+
+
+# inspect data intake
+glimpse(BabyNames)
+```
+
+
+
+## wrangle into glyph-ready form: `BeckmanNames`
+
+
+```{r}
+names <- c("Jon", "Sarah", "Alina", "Alyssa","Omar")
+
+Names <- 
+  BabyNames %>%
+  filter(name %in% names) %>%
+  group_by(name, year) %>%
+  summarise(total = sum(count, na.rm = TRUE))
+
+Names %>%
+  head()
+
+```
+
+
+
+## in the beginning you might use mplot to get started--here's the default result
+
+```{r}
+ggplot(data = Names, aes(x = year, y = total)) + geom_line()  + aes(colour = name) + theme(legend.position = "right") + labs(title = "")
+```
+
+
+## we can do better 
+1.  establish the frame
+2. plot the glyphs (i.e., select a geom)
+3. map the aesthetics
+4. add labels and title
+5. other features (e.g., alpha, sizing, etc)
+
+1. Establish the Frame
+
+Nothing is here! That is exactly what is supposed to happen. Calling `ggplot()` only tells us R that we are ready to plot and I want you to call some space to create my plot. 
+
+```{r}
+ggplot(data = Names) 
+  
+```
+
+2. plot the glyphs (i.e., select a geom)
+
+Still Nothing! We need to tell it what our axis are. 
+
+Note that ggplot uses `+`, NOT `%>%`. This is because we are **adding** layers to our plots.
+
+```{r}
+ggplot(data = Names) + 
+  geom_line()
+
+```
+
+3. Map the aesthetics
+
+Rule of thumb: anytime when you are plotting with ggplot, ALL variables need to be insdie an `aes`. 
+
+
+```{r}
+#not Quite
+ggplot(data = Names) + 
+  geom_line( aes(x = year, y = total)) 
+
+#add groups
+ggplot(data = Names) + 
+  geom_line( aes(x = year, y = total, group = name)) 
+
+#add color
+ggplot(data = Names) + 
+  geom_line( aes(x = year, y = total, color = name)) 
+
+
+```
+
+
+4. Add labels and title
+
+
+```{r}
+ggplot(data = Names) + 
+  geom_line( aes(x = year, y = total, color = name)) +
+  ggtitle("Names Over Time") +
+  xlab("Year") +
+  ylab("Popularity") +
+  guides(color = guide_legend(title = "Siblings Names" ))
+
+
+```
+
+
+
+5. other features (e.g., alpha, sizing, etc)
+
+```{r}
+ggplot(data = Names) + 
+  geom_line( aes(x = year, y = total, color = name)) +
+  ggtitle("Names Over Time") +
+  xlim(c(1972, 2022))+
+  facet_wrap( ~ name) +
+  xlab("Year") +
+  ylab("Popularity") +
+  guides(color = guide_legend(title = "Siblings Names" ))
+
+
+```
+
+
+
+
+
+
+
+## Lets overlay the overall birth trend
+
+- First we need to calculate the total number of US births each year and even 
+- plot it (by itself)
+- can we add that as a layer to the main plot?
+- clean up & polish
+
+
+```{r}
+AnnualBirths <- 
+  BabyNames %>% 
+  group_by(year) %>%
+  summarise(annualTotal = sum(count, na.rm = TRUE))
+
+# plot the annual birth trend
+AnnualBirths %>%
+  ggplot() + 
+  geom_line(aes(x = year, y = annualTotal))
+  
+```
+
+
+
+```{r}
+Names %>%
+  ggplot() + 
+  geom_line(aes(x = year, y = total, color = name)) +
+  geom_line(data = AnnualBirths, aes(x = year, y = annualTotal / 50), alpha = 0.20)
+  
+```
+
+```{r}
+Names %>%
+  ggplot(aes(x = year)) + 
+  geom_line(aes(y = total, color = name)) +
+  geom_line(data = AnnualBirths, aes(y = annualTotal / 50), alpha = 0.20) + 
+  ggtitle(label = "Frequency of Names", 
+          subtitle = "Including overlay of scaled (50:1) frequency of births in the US (per SSA)")
+
+
+```
+
+```{r}
+library(mosaicData)
+CPS85 %>% 
+  ggplot() +
+  geom_density(aes(x=wage,color=sex,fill=sex),alpha=0.4)+
+  facet_grid(~married) +
+   xlim(0,30) 
+  
+
+```
+

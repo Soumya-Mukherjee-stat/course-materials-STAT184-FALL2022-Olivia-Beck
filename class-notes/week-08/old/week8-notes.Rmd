@@ -1,0 +1,164 @@
+---
+title: "Week 8 Class Notes"
+output:
+  html_document:
+    fig_caption: yes
+    theme: flatly
+  pdf_document: default
+---
+
+```{r include=FALSE}
+# Frontmatter
+require(mosaic)
+require(knitr)
+require(dplyr)
+require(tidyr)
+
+# For typesetting
+library(xtable)
+library(ggthemes)
+baseTheme <- theme_tufte( ticks=TRUE )
+library(xkcd)
+funTheme <- theme_xkcd()
+library(scorer)
+# opts_chunk$set( tidy=FALSE, out.width="50%", comment=NA,
+#                warning=FALSE)
+options( width=60, 
+         na.rm=TRUE,
+         # Printing tables
+         xtable.type="html",
+         xtable.include.rownames=FALSE)
+require(DataComputing)
+```
+
+## Announcement
+
+- Office hours update:
+    - Mondays 11am - noon (316 Thomas)
+    - Tuesdays 3pm - **4pm** (330 Thomas)
+    - Wednesdays 2:30pm - **4pm** (316 Thomas)
+    - **Thursdays 3:30pm - 4:30pm (330 Thomas)**
+    - Fridays 11am - noon (316 Thomas)
+- Feel free to use office hours as a chance to just meet with your group and work together with an expert nearby if needed. 
+- Homework Solutions, Activity Examples, & R Cheat Sheets: "Canvas >> Files"
+
+
+## Building Graphics
+
+1. Draw (by hand) or imagine the specific plot that you intend to construct
+#. Data Wrangling (if needed) - get the data in glyph-ready form, or verify that the current form is glyph-ready for your purposes.
+#. Establish the frame using a `ggplot()` statement
+#. Create the intended glyph using `geom_[style]()` such as
+    * `geom_point()`
+    * `geom_bar()`
+    * `geom_boxplot()`
+    * `geom_density()`
+    * `geom_vline()`
+    * `geom_segment()`
+    * `geom_histogram()`
+    * `geom_ash()`
+    * and *many* more
+#. Map variables to the graphical attributes of the glyph using `aes( )`
+#. Add additional layers to the frame using the `+` symbol
+
+
+## Want some help?
+
+This can all be a lot to keep straight... visit "Canvas >> Files >> Cheatsheets"" for some resources to help you shoulder the burden:
+
+- [EnoughDCF](http://dtkaplan.github.io/DCF-2014/CourseNotes/Guides/EnoughDCF.pdf): one page summary from the author of Data Computing
+- [rstudio-ggplot2-cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/12/ggplot2-cheatsheet-2.0.pdf): 2 page summary of `ggplot2` tools and usage from RStudio
+- [rstudio-data-wrangling-cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf): 2 page summary of `dplyr` (& `tidyr`) tools and usage from RStudio
+
+Also see...  
+
+- [rstudio-rmarkdown-cheatsheet](https://www.rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf)
+- [rstudio-rmarkdown-reference](https://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf)
+- [rstudio-IDE-cheatsheet](https://www.rstudio.com/wp-content/uploads/2016/01/rstudio-IDE-cheatsheet.pdf)
+- [and more...](https://www.rstudio.com/resources/cheatsheets/)
+
+
+
+## Remarks about `facet_wrap()`
+
+The syntax for facets can be a bit complicated for new users.  Here are a few pointers:
+
+- `facet_wrap()` just makes a box for each level of the categorical variable
+    - Syntax: `facet_wrap( ~ categoricalVariable)`
+    - For example:
+
+```{r}
+data("NCHS")
+
+# 1is.na(smoker) gets cases that are non-missing for `smoker` (i.e. removes NA's)
+Heights <- 
+  NCHS %>%
+  filter(age > 20, !is.na(smoker)) %>%   
+  group_by(sex, smoker, age) %>%
+  summarise(height = mean(height, na.rm = TRUE))
+
+Heights %>%
+  ggplot(aes(x = age, y = height)) + 
+  geom_line(aes(linetype = smoker)) + 
+  facet_wrap( ~ sex)
+```
+
+## Remarks about `facet_grid()`
+
+- `facet_grid()` allows control of row & column facets
+- `facet_grid()` syntax:
+    - row & column facets: `facet_grid(rows ~ cols)`
+    - row facets only: `facet_grid( rows ~ . )` (note the required "`.`") 
+    - column facets only: `facet_grid( ~ cols)` (no "`.`" this time)
+
+```{r}
+Heights %>%
+  ggplot(aes(x = age, y = height)) + 
+  geom_line(aes(linetype = smoker)) + 
+  facet_grid(sex ~ .)
+```
+
+```{r}
+Heights %>%
+  ggplot(aes(x = age, y = height)) + 
+  geom_line() + 
+  facet_grid(sex ~ smoker)
+```
+
+
+## Homework
+
+- Activity: Bicycle Sharing (DC p. 182)
+    - Sections A.3 & A.5 are worth extra credit (not required)
+    - Make sure you complete all the "your turn" segments in A.1, A.2, A.4
+    - The last "your turn (optional)" at the end of A.2 is **required**
+- **Homework**:  
+    - DC Ch 8 Exercises: 8.1, 8.2, 8.3 (skip the world map)
+    - DC chapter 11 reading quiz on Canvas    
+
+## Activity: Bicycle Sharing (DC p. 182)
+
+Assignment is worth a total of 10 points.
+
+* [2 point] Turn in HTML with embedded .Rmd file (e.g. "DataComputing simple" template)
+* [2 points] A.1 side-by-side boxplots of rental durations
+* [4 points total] A.2 plots
+    - [0.5 point] density plot: day of the year (1 to 365)
+    - [0.5 point] density plot: day of the week (Sunday to Saturday; numeric is fine)
+    - [0.5 point] density plot: hour of the day (0 to 24)
+    - [0.5 point] density plot: minute in the hour (0 to 60)
+    - [1 points] Plot rental frequency by hour, weekday, & client type
+    - [1 points] Plot rental density by hour, weekday, & client type
+* [2 points] A.4 leaflet
+* [**EXTRA CREDIT**: 2 pts] complete both A.3 & A.5
+
+* General Remarks: 
+    - Sections A.3 & A.5 are worth extra credit (not required)
+    - Make sure you complete all the "your turn" segments in A.1, A.2, A.4
+    - The last "your turn (optional)" at the end of A.2 is **REQUIRED**
+    
+
+---
+
+[teaching](https://mdbeckman.github.io/Teaching.html) | [stat 184 home](https://mdbeckman.github.io/Teaching/AY2016-17/stat184/stat184-fall2016.html) | [syllabus](https://mdbeckman.github.io/Teaching/AY2016-17/stat184/stat184-syllabus.html) | [piazza](https://piazza.com/psu/fall2016/stat184/home) | [canvas](https://psu.instructure.com/courses/1792768)
+

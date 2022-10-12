@@ -1,0 +1,139 @@
+---
+title: "Week 8: Back to `ggplot2`"
+subtitle: "Data Computing Chapter 8"
+author: |
+        | Presenter: Omar Hagrass
+        | Content credit: Matthew Beckman
+output: 
+    slidy_presentation: default
+    html_notebook: default
+---
+
+
+```{r include=FALSE}
+library(tidyverse)
+library(dcData)
+library(mosaic)
+library(esquisse)
+knitr::opts_chunk$set(tidy=FALSE, message=FALSE)
+options(width = 80)
+```
+
+----
+
+
+## Agenda
+
+- `ggplot()` flyover
+- remarks about facets
+
+
+## Building Graphics
+
+1. Draw by hand (or imagine) the specific plot that you intend to construct
+2. Data Wrangling (if needed) to get the data in glyph-ready form, or verify that the current form is glyph-ready for your purposes.
+3. Establish the frame using a `ggplot()` statement
+4. Create the intended glyph using `geom_[style]()` such as
+    - `geom_point()`
+    - `geom_bar()`
+    - `geom_boxplot()`
+    - `geom_density()`
+    - `geom_vline()`
+    - `geom_segment()`
+    - `geom_histogram()`
+    - and *many* more
+5. Map variables to the graphical attributes of the glyph using: `aes( )`
+6. Add additional layers to the frame using the `+` symbol 
+    - Note: **not** `%>%` between layers of `ggplot2` graphics
+    - Maybe think "add layer" in `ggplot2` portions, instead of "and then" with `%>%` syntax
+
+
+## Want some help?
+
+This can all be a lot to keep straight.  Best to learn by doing, but take advantage of available resources to help shoulder the burden:
+
+- [EnoughDCF](http://dtkaplan.github.io/DCF-2014/CourseNotes/Guides/EnoughDCF.pdf): one page summary designed to accompany the Data Computing book.  Visit "Canvas >> Resources" for access.
+
+- [RStudio Cheat Sheets](https://www.rstudio.com/resources/cheatsheets/), especially:
+    - Data Visualization: 2 page summary of `ggplot2` tools and usage from RStudio
+    - Data Transformation: 2 page summary of `dplyr` (& `tidyr`) tools and usage from RStudio
+
+Also see...  
+
+- [rstudio-rmarkdown-cheatsheet](https://www.rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf)
+- [rstudio-rmarkdown-reference](https://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf)
+- [rstudio-IDE-cheatsheet](https://www.rstudio.com/wp-content/uploads/2016/01/rstudio-IDE-cheatsheet.pdf)
+- [and more...](https://www.rstudio.com/resources/cheatsheets/)
+
+
+
+
+## Remarks about faceting: `facet_wrap()`
+
+The syntax for facets requires a formula syntax we haven't seen much yet.  Also, there are two main ways to plot with facets.  Here are a few pointers:
+
+- `facet_wrap()` just makes a box for each level of the categorical variable
+    - Syntax: `facet_wrap( ~ categoricalVariable)`
+    - For example:
+
+```{r}
+data("NCHS")
+
+# 1is.na(smoker) gets cases that are non-missing for `smoker` (i.e. removes NA's)
+Heights <- 
+  NCHS %>%
+  filter(age > 20, !is.na(smoker)) %>%   
+  group_by(sex, smoker, age) %>%
+  summarise(height = mean(height, na.rm = TRUE))
+
+Heights %>%
+  ggplot(aes(x = age, y = height)) +   
+  geom_line(aes(linetype = smoker)) +   
+  facet_wrap( ~ sex)
+```
+
+## Remarks about faceting: `facet_grid()`
+
+- `facet_grid()` allows control of row & column facets
+- `facet_grid()` syntax:
+    - row & column facets: `facet_grid(rows ~ cols)`
+    - row facets only: `facet_grid( rows ~ . )` (note the required "`.`") 
+    - column facets only: `facet_grid( ~ cols)` (no "`.`" this time)
+
+```{r}
+Heights %>%
+  ggplot(aes(x = age, y = height)) + 
+  geom_line(aes(linetype = smoker)) + 
+  facet_grid(sex ~ .)
+```
+
+```{r}
+Heights %>%
+  ggplot(aes(x = age, y = height)) + 
+  geom_line() + 
+  facet_grid(sex ~ smoker)
+```
+
+
+## Back to `BabyNames`
+
+[Live example in class]
+
+
+
+## Sky's the limit
+
+
+Once you've mastered `ggplot2` you'll have incredible control to make all sorts of interesting plots!
+
+- Fun stuff: <https://github.com/chang/ggphysics>
+- Real article about the `BabyNames` data in popular media (`ggplot2` graphics):
+
+<https://fivethirtyeight.com/features/how-to-tell-someones-age-when-all-you-know-is-her-name/>
+
+
+
+
+
+
+

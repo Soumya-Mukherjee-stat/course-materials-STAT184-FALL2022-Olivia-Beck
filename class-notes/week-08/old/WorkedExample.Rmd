@@ -1,0 +1,180 @@
+---
+title: "Worked Example In Class"
+output: html_notebook
+---
+
+
+
+```{r}
+# clean up 
+rm(list = ls())
+
+# load necessary packages
+library(tidyverse)  # includes ggplot2
+library(dcData)
+library(mosaic)
+
+# data intake
+data("BabyNames", package = "dcData")
+
+
+# inspect data intake
+head(BabyNames)
+glimpse(BabyNames)
+```
+
+
+```{r}
+# wrangle into glyph-ready form
+BeckmanNames <- 
+  BabyNames %>%
+  filter(name %in% c("Matthew", "Sarah", "Eden", "Jack", "Hazel")) %>%  
+  group_by(name, year) %>%
+  summarise(total = sum(count, na.rm = TRUE))
+
+# inspect the result
+BeckmanNames %>%
+  head(6)
+```
+
+
+```{r}
+# in the beginning you might use mplot to get started--here's the default result
+ggplot(data=BeckmanNames,aes(x=total,y=year))+geom_point() 
+
+```
+
+
+```{r}
+# we can do better
+    # establish the frame
+    # pick a glyph/geom
+    # map aesthetics
+BeckmanNames %>%
+  ggplot() + 
+  geom_line(aes(x = year, y = total, color = name))
+
+
+```
+
+## Lets overlay the overall birth trend
+
+First we need to calculate the total number of US births each year--at least those with Social Security records.
+
+```{r}
+AnnualBirths <- 
+  BabyNames %>%
+  group_by(year) %>%
+  summarise(annualTotal = sum(count, na.rm = TRUE))
+
+```
+
+Lets plot that trend...
+
+```{r}
+AnnualBirths %>%
+  ggplot() +
+  geom_line(aes(x = year, y = annualTotal))
+```
+
+
+Can we add that information as a context layer for the plot of `BeckmanNames`? 
+
+
+```{r}
+BeckmanNames %>%
+  ggplot() + 
+  geom_line(aes(x = year, y = total, color = name)) + 
+  geom_line(data = AnnualBirths, aes(x = year, y = annualTotal / 50), alpha = 0.2) + 
+  ggtitle(label = "Frequency of Names in the Beckman Home", 
+          subtitle = "Including overlay of scaled (50:1) frequency of births in US (per SSA)")
+
+
+
+```
+
+
+
+
+
+
+## [From Slides] Sky's the limit!!
+
+Once you've mastered `ggplot2` you'll have incredible control to make all sorts of interesting plots!
+
+- Fun stuff: <https://github.com/chang/ggphysics>
+- Real article about the `BabyNames` data in popular media (`ggplot2` graphics):
+
+<https://fivethirtyeight.com/features/how-to-tell-someones-age-when-all-you-know-is-her-name/>
+
+
+
+
+## Here's a crack at that one
+
+With support from Modern Data Science with R by Baumer, Horton, & Kaplan.
+
+```{r}
+library(babynames)  # includes slightly different version of babynames data
+library(Hmisc)      # has a quantile function I want to use
+library(mdsr)
+library(ggthemes)   
+
+BabynamesDist <- make_babynames_dist()  # from mdsr; take a look!
+glimpse(BabynamesDist)
+
+# Age distribution for American males named "Joseph" (according to US Social Security data)
+
+Joseph <- BabynamesDist %>%
+  filter(name == "Joseph" & sex == "M")
+
+# constructing the plot
+name_plot <- 
+  Joseph %>%
+  ggplot(aes(x = year)) + 
+  geom_bar(stat = "identity", aes(y = count_thousands * alive_prob), 
+           fill = "#b2d7e9", color = "white") + 
+  geom_line(aes(y = count_thousands), size = 2) + 
+  ylab("Number of People (thousands)") + 
+  xlab(NULL)
+
+# first pass
+name_plot
+```
+
+
+```{r}
+# we use the `wtd.quantile()` function from the `Hmisc` package here
+median_yob <- wtd.quantile(x = Joseph$year, weights = Joseph$est_alive_today, probs = 0.5)
+median_yob
+```
+
+
+```{r}
+# note use of `ifelse` to create a new histogram with one non-zero bar at `median_yob`
+# add titles
+# add text labels (improve fonts)
+# add curved arrow
+
+name_plot <- 
+  name_plot + 
+  geom_bar(stat = "identity", color = "white", fill = "#008fd5", 
+           aes(y = ifelse(year == median_yob, est_alive_today / 1000, 0))) 
+
+name_plot + 
+  ggtitle(label = "Age Distribution of American Boys Named Joseph", subtitle = "By year of birth") + 
+  geom_text(x = 1935, y = 40, size = 3.5, family = "mono", label = "Number of Josephs \n born each year") + 
+  geom_text(x = 1915, y = 13, size = 3.5, family = "mono", color = "#008fd5", 
+            label = "Number of Josephs \n born each year \n estimated to be alive \n on Jan. 1, 2014") + 
+  geom_text(x = 2003, y = 40, size = 3.5, family = "sans", color = "darkgray",
+            label = "The median\nliving Joseph\nis 37 years old.") + 
+  geom_curve(x = 1995, xend = 1974, y = 40, yend = 24, 
+             arrow = arrow(length = unit(0.3, "cm")), curvature = 0.5) + 
+  ylim(0, 42) + 
+  theme_fivethirtyeight()  # getting pretty close!
+  
+```
+
+
+
+

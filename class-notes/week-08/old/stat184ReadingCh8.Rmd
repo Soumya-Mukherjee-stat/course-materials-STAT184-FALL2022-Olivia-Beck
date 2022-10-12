@@ -1,0 +1,196 @@
+---
+title: "STAT 184 Reading: Chapter 8"
+author: "Matt Beckman"
+date: ""
+output: 
+  html_document:
+    fig_height: 3
+    fig_width: 5
+---
+<!-- Don't edit in between this line and the one below -->
+```{r include=FALSE}
+# Don't delete this chunk if you are using the DataComputing package
+library(DataComputing)
+```
+*Source file* 
+```{r, results='asis', echo=FALSE}
+includeSourceDocuments()
+```
+<!-- Don't edit the material above this line -->
+
+
+# Example: Plotting Princes
+
+### Data Wrangling
+```{r}
+# Load the data table
+data("BabyNames")
+
+# Filter data to babies named "Prince"
+Princes <- 
+  BabyNames %>%
+  filter(name == "Prince")
+
+# Inspect first few rows
+head(Princes)
+```
+
+### Plotting
+
+Piece-wise:
+```{r}
+# frame is count vs year (Y vs X)
+the_frame <- ggplot(data = Princes, 
+                    aes(x = year, y = count))
+
+# layer 1: plot points
+layer1 <- geom_point(data = Princes, aes(shape = sex))
+
+# layer 2: vertical line
+layer2 <- geom_vline(xintercept = 1978)
+
+# combine the elements
+the_frame + layer1 + layer2
+```
+
+
+All together with chain syntax: 
+```{r}
+Princes %>%
+  ggplot(aes(x = year, y = count, shape = sex)) +
+  geom_point() +
+  geom_vline(xintercept = 1978)
+
+```
+
+
+# Example: Growth & Smoking
+
+### Data Wrangling
+```{r}
+Heights <- 
+  NCHS %>%
+  filter(age > 20, !is.na(smoker)) %>%
+  group_by(sex, smoker, age) %>%
+  summarise(height = mean(height, na.rm = TRUE))
+```
+
+### Plotting
+```{r}
+Heights %>% 
+  ggplot(aes(x = age, y = height)) +
+  geom_line(aes(linetype = smoker)) +
+  facet_wrap(~ sex)
+```
+
+
+### Additional customization
+
+```{r}
+Heights %>% 
+  ggplot(aes(x = age, y = height)) +
+  geom_line(aes(linetype = smoker)) +
+  facet_wrap(~ sex) + 
+  xlim(30, 75) + 
+  ylim(1.5, 1.8) + 
+  xlab("Age (yrs)") + 
+  ylab("Height (m)")
+
+```
+
+
+# Exercises
+
+### Problem 8.1
+
+1. Construct the graphics frame: (c) `ggplot()` 
+2. Add a layer of glyphs: (a) `geom_points()` 
+3. Set an axis label: (e) `ylab()`
+4. Divide the frame into facets: (d) `facet_wrap()`
+5. Change the scale for the frame: (d) `scale_y_log10()`
+
+Note: use `help()` to learn about other functions from the `ggplot2` package.
+
+### Problem 8.2
+
+##### Load and inspect the data
+```{r}
+# Load the data
+data("CPS85")
+
+# Inspect data
+head(CPS85)
+```
+
+##### Plot 1:
+```{r}
+# Construct Plot 1
+CPS85 %>%
+  ggplot(aes(x = age, y = wage, shape = married)) + 
+  geom_point() + 
+  ylim(0, 30) + 
+  facet_wrap( ~ sector)
+```
+
+##### Plot 2: 
+```{r}
+# Construct Plot 1
+CPS85 %>%
+  ggplot(aes(x = age, y = wage)) + 
+  geom_point() + 
+  facet_grid(sex ~ married)
+```
+
+
+### Problem 8.3
+
+##### Load and inspect the data
+```{r}
+# Load the data
+data("CPS85")
+
+# Inspect data
+head(CPS85)
+```
+
+##### Plot A:
+
+```{r}
+CPS85 %>%
+  ggplot(aes(x = age, y = wage)) + 
+  geom_point()
+```
+
+
+##### Plot B: 
+
+[skip world map; Problem 5.2]
+
+```{r eval=FALSE}
+# Load and inspect the data
+data("HappinessIndex")
+head(HappinessIndex)
+
+# Construct the world map
+WorldMap(data = HappinessIndex, key = country, fill = corruption)
+```
+
+
+##### Plot C:
+
+```{r}
+CPS85 %>%
+  ggplot(aes(x = age, y = wage)) + 
+  geom_point(aes(shape = sex)) + 
+  facet_grid(married ~ .)
+```
+
+
+##### Plot D:
+
+```{r}
+CPS85 %>%
+  ggplot(aes(x = age, y = wage)) + 
+  geom_point(aes(shape = married)) + 
+  ylim(0, 30) 
+```
