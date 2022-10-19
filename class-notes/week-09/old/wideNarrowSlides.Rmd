@@ -1,0 +1,259 @@
+---
+title: "Redefining rows: Wide vs narrow data organization"
+subtitle: "Data Computing Chapter 12"
+author: |
+        | Presenter: Omar Hagrass
+        | Content credit: Matthew Beckman
+output: 
+  slidy_presentation: default
+  html_notebook: default
+---
+
+```{r include=FALSE}
+library(tidyverse)
+library(printr)
+library(mosaic)
+library(dcData)
+
+#devtools::install_github("dcl-docs/dcldata")
+library(dcldata)
+
+options(width = 80)
+```
+
+## Cases, Variables, and Values
+
+A data table is comprised of *cases* and *variables*.
+
+Each *variable* comprises *values* (or levels).
+
+There is no hard distinction between a variable and a value.  What's a variable in one situation may be a value in another, and vice versa.
+
+```{r echo=FALSE}
+Kids <-
+  data.frame(who = c("Eden", "Jack", "Hazel"),
+             age = c(9, 6, 3), 
+             sex = c("F", "M", "F"),
+             indoors = c("Gaming", "Trucks", "Puzzles"),
+             outdoors = c("Swimming", "Bicycle", "Playground"))
+```
+
+A data table
+
+```{r}
+Kids
+```
+
+
+## Cases, Variables, and Values
+
+- Variables: `who`, `age`, `sex`, `indoors`, `outdoors`
+    - Values: 
+        - `who` is a child's name
+        - `age` is numeric age
+        - `sex` is sex of the child
+        - `indoors` is a hobby while indoors
+        - `outdoors` is a hobby while outdoors
+- Cases: kids {Eden, Jack, Hazel}
+
+```{r echo=FALSE}
+Kids
+```
+
+
+## Two formats
+
+- Data in Key/Value format are **narrow**
+    - possible to get *too* narrow if the meaning of case becomes awkward
+- The corresponding **wide** format has 
+    - separate variables for each level in `key`
+    - sets the values for those variables from the info in `value`
+
+### Narrow
+
+Q: What IS different?
+Q: What is NOT different?
+
+```{r}
+Kids %>% 
+  pivot_longer(cols = c(indoors, outdoors), 
+               names_to = "where", values_to = "hobby")
+```
+
+
+### (Too) Narrow
+
+None of the data has been lost here, but it's not a helpful form since there isn't a useful definition of "case".  
+
+```{r echo=FALSE, warning=FALSE}
+Kids %>% 
+  mutate(age = as.character(age)) %>%  
+  pivot_longer(cols = c(who, age, sex, indoors, outdoors), 
+               names_to = "key", values_to = "value")
+```
+
+### Wide
+
+```{r echo=FALSE, warning=FALSE}
+Kids
+```
+
+
+## So what?
+
+- This allows us to easily redefine how rows are presented in the data
+    - Possibly motivated by the research question
+    - Possibly motivated by desire to join two data tables with different case definitions
+    - Possibly motivated by a data visualization
+- Also, some operations are easy in wide format, but hard in narrow and *vice versa*
+- We need tools that make it easy to switch back and forth
+
+
+### Excerpt from `BabyNames`
+
+```{r echo=FALSE}
+data("BabyNames", package = "dcData")
+
+ShortBabyNames <- 
+  BabyNames %>%
+  filter( name %in% c("Eden", "Jack", "Hazel"), 
+          year %in% 2012:2013 ) %>% 
+  arrange(name, year)
+```
+
+```{r echo=FALSE}
+ShortBabyNames
+```
+
+### Questions:
+
+RQ 1. How many babies of each name and sex?
+RQ 2. For each name, is it primarily given to girls or boys?  Which names are gender neutral?
+
+
+
+## In narrow format
+
+```{r}
+data("BabyNames", package = "dcData")
+
+BabyNames <- 
+  BabyNames %>%
+  filter( name %in% c("Eden", "Jack", "Hazel")) 
+```
+
+RQ 1. How many babies of each name and sex?
+
+```{r}
+BabyTotals <-
+  BabyNames %>%
+  group_by(name, sex) %>%
+  summarise(total = sum(count))
+```
+
+```{r echo=FALSE}
+BabyTotals
+```
+
+Easy!
+
+
+
+## In Wide format
+
+RQ 2. Which names are most gender neutral?
+
+
+```
+WideOutput <- 
+  NarrowInput %>% 
+  pivot_wider(names_from = var1, values_from = var2, values_fill = 0)
+```
+
+- we want a new column for each category of `sex`, so `names_from = sex` 
+    - we will "unstack" each available category as a new variable (a.k.a. cast, spread, unfold)
+    - categories of `sex` were "F" and "M" in this example
+- the values/entries for our new variables are coming from `total`, so `values_from = total`
+    - `values_fill = 0` specifies a default value to fill when missing
+
+
+```{r}
+BabyTotalsWide <- 
+  BabyTotals %>% 
+  pivot_wider(names_from = sex, values_from = total, values_fill = 0)
+
+BabyTotalsWide
+```
+
+## With sexes side by side... 
+
+We can easily calculate balance associated with names
+
+
+```{r}
+BabyTotalsWide <- 
+  BabyTotalsWide %>% 
+  rename(fem = F, male = M) %>%         # `F` is a terrible variable name (why?)
+  mutate(prop_fem  = fem  / (male + fem), 
+         prop_male = male / (male + fem),
+         name_specificity = pmax(prop_fem, prop_male))    # what does `pmax()` do?
+
+BabyTotalsWide
+```
+
+## `pivot_longer( )`---when you have "Wide" and want "Narrow"
+
+Syntax:
+
+```
+NarrowOutput <- 
+  WideInput %>% 
+  pivot_longer(cols = c(wide_var1, wide_var2, ...), names_to = "long_var1", values_to "long_var2")
+```
+
+- The `cols` are the variables we want to combine (a.k.a. melt, stack, fold, gather)
+- e.g. `prop_fem` and `prop_male` in this case
+
+```{r echo=TRUE}
+BabyTotalsNarrow <- 
+  BabyTotalsWide %>% 
+  select(prop_fem, prop_male) %>%
+  pivot_longer(cols = c(prop_fem, prop_male), names_to = "sex", values_to = "proportion") 
+
+BabyTotalsNarrow
+```
+
+## With sexes stacked again...
+
+We can make an intuitive bar chart (though some clean up is needed...)
+
+```{r}
+BabyTotalsNarrow %>%
+  ggplot() + 
+  geom_bar(aes(x = name, fill = sex, weight = proportion)) 
+  
+```
+
+#### With some improvements 
+
+- clean up labels of sexes
+- add title, source, & better axis labels (y-axis label had been flat wrong)
+
+```{r}
+# first, clean up the labels in `sex` for plotting
+BabyTotalsNarrow %>%
+  mutate(sex = if_else(sex == "prop_fem", 
+                       true = "female", 
+                       false = if_else(sex == "prop_male", 
+                                       true = "male", 
+                                       false = "unk")  # end of "inner" if_else()
+                       )                               # ends the "outer" if_else()
+         ) %>%                                         # ends the mutate() 
+  ggplot() + 
+  geom_bar(aes(x = name, fill = sex, weight = proportion)) + 
+  ggtitle("Gender Balance among Names of Beckman Kids", 
+          subtitle = "source: U.S. Social Security Administration") + 
+  xlab("Name") + 
+  ylab("Proportion")
+  
+```
