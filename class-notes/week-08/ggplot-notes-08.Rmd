@@ -63,7 +63,10 @@ diamonds %>%
   dplyr::filter(color == "E") %>%
   head()
 
-
+#normal
+diamonds %>%
+  filter(color == "E") %>%
+  head()
 
 ```
 
@@ -373,7 +376,7 @@ ggplot(data = diamonds, aes(x = carat, y = price)) +
 
 ```{r}
 ggplot(data = diamonds, aes(x = carat, y = price)) +
-  geom_point() +
+  geom_point(aes(color = depth), alpha = 0.5, size = 1) +
   ggtitle("Diamonds Data") +
   xlab("Carat") +
   ylab("Price")
