@@ -1,0 +1,72 @@
+---
+title: "Week 10: Web Scraping Demo"
+subtitle: "STAT 184"
+author: "Dr. Matthew Beckman"
+output: 
+    html_notebook: default
+---
+
+```{r include=FALSE}
+
+knitr::opts_chunk$set(tidy=FALSE, message=FALSE, warning=FALSE)
+options(width = 80)
+```
+
+
+
+
+## Penn State Football Receiving Statistics
+
+1. Google Penn State Football Statistics: <http://bfy.tw/88gl>
+
+2. Edit the R code chunk shown to paste `webpage` URL with quotes around it as shown.
+
+3. Execute the code chunk to scrape all HTML tables found on the page into a "list" object in the R environment called `Tables` here
+
+4. Identify a data table from the source (for example, "receiving statistics") and find it in the list object in your R environment
+
+
+```
+webpage <- ""
+
+table_list <- 
+  webpage %>%
+  read_html() %>%
+  html_nodes(css = "table") %>%
+  html_table(fill = TRUE)
+
+str(table_list)
+```
+
+
+## Penn State Football Receiving Statistics
+
+
+```{r}
+library(tidyverse)
+library(rvest)
+
+
+
+
+```
+
+
+```{r}
+# R stores the result as a "list" object, let's take a look
+
+
+# Double square brackets select an element of the list; let's store it at as a data frame
+
+
+# Inspect result
+
+
+# Tidy up the data table & rename variables  
+
+  
+# Inspect result
+
+
+```
+
