@@ -128,7 +128,44 @@ narrow_table
 ```
 
 
-### (Too) Narrow
+This is a good narrow table (and a tidy table!). Each case (region, year, quarter combination) has a row and each variable has a column. 
+
+Be careful you don't make your tables too narrow where we loose the definition of a case (example on next slide). 
+
+
+### Wide
+
+
+Let's remember our narrow table. 
+
+```{r}
+narrow_table
+
+```
+
+
+Now we can make our narrow table wide again. 
+
+```{r}
+wide_table <- 
+  narrow_table %>%
+  pivot_wider(
+    names_from = year,       # the column in the narrow table with the column names for the wide table 
+    values_from = num_nests  # the column in the narrow table with the values in the narrow wide
+  )
+
+wide_table
+```
+
+We can compare this to the original table to make sure its the same thing. Yep! 
+
+```{r}
+example_eagle_nests
+```
+
+
+
+## (Too) Narrow
  
 
 ```{r echo=FALSE, warning=FALSE, echo = F}
@@ -159,7 +196,7 @@ class_example_Table
 
 ```
 
-We can make it narrow like this: 
+We can make it (appropriately) narrow like this: 
 
 ```{r}
 class_example_Table %>%
@@ -185,30 +222,6 @@ class_example_Table %>%
 ```
 
 
-
-
-### Wide
-
-Now we can make our narrow table wide again. 
-
-```{r echo=FALSE, warning=FALSE}
-narrow_table
-
-wide_table <- 
-  narrow_table %>%
-  pivot_wider(
-    names_from = year, 
-    values_from = num_nests
-  )
-
-wide_table
-```
-
-We can compare this to the original table to make sure its the same thing. Yep! 
-
-```{r}
-example_eagle_nests
-```
 
 
 ## So what?
