@@ -1,0 +1,176 @@
+---
+title: "Guided Practice"
+subtitle: ""
+author: "Dr. Matthew Beckman"
+output: 
+    html_notebook: default
+---
+
+
+
+```{r}
+# clean up R environment
+rm(list = ls())
+
+# libraries
+library(tidyverse)
+#devtools::install_github("cran/mdsr")
+library(mdsr)
+library(mosaic)
+
+# data intake
+data("SAT_2010", package = "mdsr")
+
+
+```
+
+
+
+## Guided Example: SAT Data exploration
+
+
+**Statement of Research Question**
+
+Are higher teacher salaries associated with better state-wide SAT scores?
+
+
+## Examine the data source
+
+for example: 
+
+- review data intake
+- variable types, 
+- coding, 
+- missingness, 
+- who/what/when/where/why/how data were collected
+- basic summary statistics and plots to learn about variables
+
+
+```{r}
+#examine the data source 
+
+
+```
+
+
+```{r}
+head(SAT_2010)
+tail(SAT_2010)
+
+#?favstats
+favstats(~salary,data=SAT_2010)
+favstats(~total,data=SAT_2010)
+
+
+SAT_2010%>% 
+  ggplot(aes(x=salary)) +
+  geom_density()+
+  geom_rug()+
+  xlab("State average teacher salary(US dollars)")
+
+
+SAT_2010%>% 
+  ggplot(aes(x=total)) +
+  geom_density()+
+  geom_rug()+
+  xlab("State average total SAT score")
+```
+
+
+
+#### who/what/when/where/why/how data were collected?
+
+- average teacher salaries (in 2010) & average SAT scores for each of the 50 states
+- <https://mdsr-book.github.io/mdsr2e/ch-foundations.html>
+- there's isn't much additional detail in the MDSR book about the origins of the data, so we might want to contact authors of "Modern Data Science with R" book to learn more about the data collection process
+
+
+
+## Discover features in the data that may impact modeling decisions
+
+Some of this is based on scrutiny of the data collection practices (and study design), but much of it can be substantiated in EDA
+
+- functionally dichotomous variables--e.g., survey asks people to rate job approval of a contraversial president on scale of 1-7 yet most people choose either 1 or 7 and the options in between are rarely used
+- highly correlated predictor variables (i.e., strong relationships)
+- hierarchy or nesting--e.g., data from students within classrooms within schools (within states...)
+- repeated observations of the same "case"--e.g., medical study follows up with the same group of patients every 6 months
+- investigate potential outliers
+
+```{r}
+
+ SAT_2010 %>% 
+  ggplot(aes(x=expenditure, y=total,color=sat_rate))+
+  geom_point() +
+  geom_smooth(method=lm)   
+
+
+```
+```{r}
+SAT_2010 %>%
+  filter(sat_rate == "lower", expenditure >15)
+```
+
+
+```{r}
+SAT_2010<-
+  SAT_2010 %>%
+  mutate(sat_rate = cut(sat_pct,breaks=c(0,40,100),
+                        labels=c("lower","higher")) )
+
+
+```
+
+```{r}
+SAT_2010 %>% 
+  ggplot(aes(x=salary, y=total))+
+  geom_point() +
+  geom_smooth(method=lm)
+
+SAT_2010 %>% 
+  ggplot(aes(x=salary, y=sat_pct,color=sat_rate))+
+  geom_point()+
+  geom_smooth()
+
+```
+```{r}
+SAT_2010 %>% 
+  ggplot(aes(x=salary, y=total,color=sat_rate))+
+  geom_point() +
+  geom_smooth(method=lm)
+```
+
+
+## Address research question
+
+- one or a few key data visualizations that are most informative to a reader/observer
+- must include data visualization (but not exclusively) 
+- often requires exploring many data visualizations to find the one or few that most effectively communicate intuition for your research question
+- we may even do some exploratory modeling here
+
+
+
+
+
+
+
+
+
+
+
+## Statistical modeling
+
+After we have completed a thorough EDA, we are ready for inferential or predictive modeling.  Although we might discover new questions and come back for **more** EDA!  It's a process.
+
+Even fancy statistical models can certainly be used for exploratory and descriptive purposes during EDA (e.g., we fit smoothers & regression lines above), but they do impose a kind of structure on the data that influences (biases) our expectations.  
+
+It's good advice to learn as much as you can can while imposing as little additional structure as possible, and then gradually adding more structure to progressively refine our understanding.  
+
+Ideally, we want to let the data speak for itself, and then use appropriate analytical results like models to simply refine interpretations/predictions and more precisely quantify the uncertainty of our conclusions.  
+
+
+
+
+
+
+
+
