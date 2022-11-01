@@ -119,6 +119,13 @@ ggplot(GlyphReadyData, aes(x = Year, y = Mean)) +
   xlab("Year") +
   ylab("Passengers")
 
+dat_passengers %>%
+  pivot_longer(!Year, names_to = "Month", values_to = "Val") %>%
+  ggplot()+
+  geom_point(aes(x = as.factor(Year), y = Val), alpha = 0.5) +
+  geom_point(data = GlyphReadyData, aes(x = as.factor(Year), y = Mean), col = 2, shape = 4, size = 4) +
+  xlab("Year")
+  
 ```
 
 ##### Questions
@@ -350,7 +357,7 @@ This is great! But it is essentially the exact same map as using `usMap` but wit
 
 A few notes:
 
-- I personally prefer to plot color on the log scale (usually but not always). This is not necessary, but I find it easier to interpret. Not everyone does.
+- I personally prefer to plot color on the log scale (usually but not always). This is not necessary, but I find it easier to see broad trends as it dampens the extremity of the maximum. Not everyone prefers this method.
 
 - Notice the order on the legend goes smallest at the top to largest at the bottom. This is counterintuitive. If I were to add this graphic to a report, I would make sure it legend went largest to smallest.
 
