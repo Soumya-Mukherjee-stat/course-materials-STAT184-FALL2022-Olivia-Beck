@@ -1,0 +1,26 @@
+---
+title: "Initial EDA Rubric "
+output: html_notebook
+---
+
+This is the rubric for your **Initial EDA Due NOVEMBER 18 @ 11:59 PM.**. This is **a** draft of your research project, **not** the final draft of your  project. I want you to have chosen a research topic, 2 data sets, and begin to explore how you can use data wrangling and graphical techniques we have learned in class to answer your research question. This does not need to be a final draft of the report, but should be a good start to examining your data. 
+
+Rubric: 
+
+- [4 point] **Guiding Research Question**: Make a clear statement of a single guiding/research question that will drive your analysis. It should be phrased as a question that you will try to investigate (i.e., it should have a question mark)
+- [4 points] **Data Intake** Each data source must be included in the provided GitHub Repo & properly accessed in the Rmd (e.g., read_csv() or other means). 
+  - If you are using a .csv file (or something similar), that file should be saved in the repo and should be loaded in the Rmd document appropriatly. 
+  - If you are using webscraping, your Rmd file should include the link to the website as well as be able to load in the data from the website (it should be very clear which webpage you are scraping). 
+- [4 points] **Examine each data source** 
+  - State the origin and purpose (who/what/when/where/why/how data were collected)
+  - key variables (types, coding, missingness, summary statistics/plots) are clearly presented. 
+- [4 points] **Discover/Explore features that may influence modeling decisions (both sources)**
+  -  investigate potential outliers
+  - consideration for transforming, mutating, or recoding variables (e.g., log transformations, numeric variable that's functionally dichotomous, new variables to be calculated)
+  - note inherent relationships among rows (e.g., autocorrelation, hierarchy, spatial/temporal proximity)
+  - note: really, you're just required to look for these sort of things. If you look and decide no action is needed, just explain your process
+- [4 points] **Address research question** based on observations from your data sources
+  - from this initial EDA, how do you think you will answer your research question. (This does not need to be an indepth answer, just some initial reactions to your EDA). 
+  - build intuition for your research question(s) as initially stated
+  - note observations or patterns that prompt you to refine your research questions or add new questions to investigate
+- [4 points] **Pushed** changes to GitHub
