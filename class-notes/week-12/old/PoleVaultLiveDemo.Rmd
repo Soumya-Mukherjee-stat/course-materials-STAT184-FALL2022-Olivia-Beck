@@ -1,0 +1,61 @@
+---
+title: "Analysis of pole vault records progression"
+author: "Matthew Beckman"
+output: html_notebook
+---
+
+
+
+
+```{r}
+# clean up R environment
+rm(list = ls())
+
+# packages
+require(tidyverse)    
+require(lubridate)  # tools to handle date information
+require(rvest)      # includes our web scraping functions
+```
+
+
+## Pole Vault Records Clean Up 
+
+```{r echo=TRUE}
+# find the page
+webpage <- "https://en.wikipedia.org/wiki/Men%27s_pole_vault_world_record_progression"
+
+table_list <- 
+  webpage %>%
+  read_html() %>%
+  html_nodes(css = "table") %>%
+  html_table(fill = TRUE)
+
+IAAFmenRaw <- table_list[[1]]  # convert list to data frame
+head(IAAFmenRaw) # inspect the data
+
+```
+
+
+
+
+```{r}
+IAAFmen <- 
+  IAAFmenRaw %>%
+  rename(recordsBroken = `#[4]`) %>%
+  mutate(Date = gsub(pattern = "\\[.\\]", replacement = "", x = Date)) %>%
+  mutate(Mark  = parse_number(Mark), 
+         country = gsub(pattern = ".+, ", replacement = "", x = Venue), 
+         country = if_else(country == "U.S.", true = "United States", false = country)) %>%
+  tidyr::extract(col = Venue, into = "City", regex = "(^\\w+)")
+  
+
+
+IAAFmen
+```
+
+
+
+
+
+
+
