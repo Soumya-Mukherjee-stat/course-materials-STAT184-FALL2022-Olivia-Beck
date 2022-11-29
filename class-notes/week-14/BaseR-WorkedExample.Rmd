@@ -1,0 +1,168 @@
+---
+title: "CI coverage simulation"
+author: "Dr. Matthew Beckman"
+output: html_notebook
+---
+
+
+# Simulation 
+
+#### Result from a real study about carbon capture in tropical forests: 
+
+> 95% CI: 11,600 ± 2⋅1000 = (9,600, 13,600)
+
+> "We are 95% confident that the average amount of carbon stored in each square kilometer of tropical forest is between 9,600 and 13,600 tons"
+
+
+What's wrong with saying "there's a 95% chance that the average amount of carbon stored in each square kilometer of tropical forest is between 9,600 and 13,600 tons" ??
+
+```{r}
+normDatSim <- rnorm(n = 15, mean = 11600, sd = 1000)
+# normDatSim <- rexp(n = 15, rate = 1/11600)  # a non-normal distribution for comparison
+
+ggplot() +
+  geom_density(aes(normDatSim))
+
+t.test(normDatSim)
+
+```
+
+
+# Simulation with Loops
+
+```{r}
+# simulation settings
+
+nsimulations <- 100
+mu <- 11600
+sigma <- 1000
+sampleSize <- 15
+
+# initialize a data frame where we can store various results at each step in our simulation
+
+ConfIntDat <- data.frame(simulationID = rep(NA, nsimulations), 
+                         lower = rep(NA, nsimulations), 
+                         upper = rep(NA, nsimulations), 
+                         captureMu = rep(NA, nsimulations))
+
+# use a loop to simulate many results and store them at each step
+
+for (i in 1:nsimulations) {                                   # increment 'i' from 1 to 'nsimulations'
+  normDatSim <- rnorm(n = sampleSize, mean = mu, sd = sigma)  # simulate a new random sample
+  ConfIntDat$simulationID[i] <- i                             # store an ID for each sample
+  ConfIntDat$lower[i] <- t.test(normDatSim)$conf.int[1]       # store the lower bound of our CI
+  ConfIntDat$upper[i] <- t.test(normDatSim)$conf.int[2]       # store upper bound of our CI
+  ConfIntDat$captureMu[i] <- (mu > ConfIntDat$lower[i] & mu < ConfIntDat$upper[i])  # is mu captured?
+
+}
+
+ConfIntDat
+
+# let's plot it!
+
+library(tidyverse)
+
+ConfIntDat %>%
+  ggplot() +
+  geom_segment(aes(    x = lower,    y = simulationID, 
+                    xend = upper, yend = simulationID, 
+                   color = captureMu)) + 
+  geom_vline(aes(xintercept = mu)) + 
+  xlab("Simulated confidence interval from Normal data") + 
+  ylab("Index of a CI based on a simulated random sample")
+
+
+# how often did our 95% CI actually capture mu? Easy!
+
+mean(ConfIntDat$captureMu)
+
+
+```
+
+- Can you see why we call it a "95% confidence interval"?
+- Tinker with the simulation settings and try again 
+    - Explore changes to `nsimulations`, `mu`, `sigma`, and `sampleSize` 
+    - Try changing one at a time to larger or smaller values and observe what happens
+
+
+# another way... (some would say "The R Way")
+
+- we can make a function that handles the guts of the loop and then call the function as an argument 
+- then we can leverage more efficient tools to do things way faster (vectorized functions, parallel processing, etc)
+
+
+
+### making a function...
+
+- the simulation settings will be arguments we (or another user) might want to change
+- when in doubt, it's better to program arguments rather than "hard code" specific values within the guts of the function
+
+```{r}
+
+ciSim <- function(mu, sigma, sampleSize) {
+  ## Purpose: function simulates random Normal data and constructs a 95% CI
+  ## Arguments: 
+  ##    mu: population mean for Normal distribution from which samples are drawn
+  ##    sigma: population standard deviation for Normal distribution from which samples are drawn
+  ##    sampleSize: sample size to draw from Normal distribution
+  
+  result <- list(NULL)
+  normDatSim <- rnorm(n = sampleSize, mean = mu, sd = sigma)  # simulate a new random sample
+  result[1] <- t.test(normDatSim)$conf.int[1]                 # store lower bound of CI
+  result[2] <- t.test(normDatSim)$conf.int[2]                 # store upper bound of CI
+  result[3] <- (mu > result[1] & mu < result[2])              # store mu capture result
+  return(result)                                              # return our results
+}
+
+ciSim(mu = 34, sigma = 5, sampleSize = 15)
+
+```
+
+### let's use mosaic::do() which can "do" something many times without writing a loop
+
+```{r}
+library(mosaic)
+
+sim_results <- mosaic::do(10000) * ciSim(mu = 34, sigma = 5, sampleSize = 15)
+sim_results
+
+# some handy tricks to get things into a data frame as desired
+sim_results_df <- 
+  sim_results %>%
+  transmute(lower = unlist(V1),    # unlist() simplifies to the object class inside the list element
+            upper = unlist(V2), 
+            muCapture = unlist(V3)) %>%
+  rownames_to_column() %>%    # handy function to create a column that indexes each row
+  mutate(rowname = parse_number(rowname))
+
+
+sim_results_df
+
+```
+
+
+
+### plot it
+
+
+```{r}
+sim_results_df %>%
+  ggplot() +
+  geom_segment(aes(    x = lower,    y = rowname, 
+                    xend = upper, yend = rowname, 
+                   color = muCapture)) + 
+  geom_vline(aes(xintercept = 34)) +      # mu reference is hard coded here because mu wasn't returned by `ciSim()`
+  xlab("Simulated confidence interval from Normal data") + 
+  ylab("Index of a CI based on a simulated random sample")
+
+
+# how often did our 95% CI actually capture mu? Easy!
+
+mean(sim_results_df$muCapture)
+
+```
+
+
+
+
+
