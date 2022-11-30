@@ -14,7 +14,7 @@ output:
 - SRTE's available 
 - Activity: Base R due December 7th 
 
-- Final Project Peer Review (Optional but highly recommened)
+- Final Project Peer Review (Optional but highly recommended)
   - December 1, 2022 @ 11:59pm: Submit draft of Final Project Report for peer review
   - December 7, 2022 @ 11:59pm: [Optional] Peer Reviews Due (review other group projects--only required if you had submitted a draft to receive peer review)
   
@@ -24,33 +24,6 @@ output:
 
 - All late work due December 9th at 11:59 p.m. 
 - We will not be meeting over finals week 
-
-# Some tools we'll meet 
-
-- Facts & extensions from the reading 
-    - Create vectors using `c()`, `:`, `seq()`, `rep()`.
-    - Select vector elements using the square brackets `[ ]` (have you done this before?).
-    - Program using 
-        - `for` loop,
-        - `while` loop, 
-        - `if` statements, 
-    - Write an original `function` (where have you done this before?)
-    - Subsetting with `[` (especially for vectors & data frames)
-    - Subsetting with `$` (especially for data frames & lists)
-    - Subsetting with `[[` (especially for lists)
-- [RStudio Cheat Sheet (on Canvas)](https://www.rstudio.com/wp-content/uploads/2016/05/base-r.pdf)
-- Nested loops (e.g., data frame indices)
-- Extracting elements from arbitrary objects (e.g. a regression model object) 
-- Programming a simulation with & without loops
-
-
-
-
-```{r}
-rm(list = ls())
-
-# no packages to load since we're talking about Base R!
-```
 
 ---
 
@@ -73,6 +46,40 @@ e.g., Confidence interval statements:
 What's wrong with saying "there's a 95% chance that the average amount of carbon stored in each square kilometer of tropical forest is between 9,600 and 13,600 tons" ??
 
 ---
+
+
+# Some tools we'll meet 
+
+- Facts & extensions from the reading 
+    - Create vectors using `c()`, `:`, `seq()`, `rep()`.
+    - Subsetting 
+      - Subsetting with `[` (especially for vectors & data frames)
+      - Subsetting with `$` (especially for data frames & lists)
+      - Subsetting with `[[` (especially for lists)
+
+    - Program using 
+        - `for` loop,
+        - `while` loop, 
+        - `if` statements, 
+    - Write an original `function` (where have you done this before?)
+    
+
+- Nested loops (e.g., data frame indices)
+- Extracting elements from arbitrary objects (e.g. a regression model object) 
+- Programming a simulation with & without loops
+
+- [RStudio Cheat Sheet (on Canvas)](https://www.rstudio.com/wp-content/uploads/2016/05/base-r.pdf)
+
+
+
+
+```{r}
+rm(list = ls())
+
+# no packages to load since we're talking about Base R!
+```
+
+----
 
 # Creating vectors
 
@@ -206,17 +213,17 @@ y <- sample(letters, 10, replace = TRUE)
 y
 ```
 
-#### Select elements equal to "F"
+#### Select elements equal to "g"
 
 ```{r, echo=TRUE}
-y == "F"
-y[y == "F"]
+y == "g"
+y[y == "g"]
 ```
 
 
-#### Select elements in the set {f, g, h}
+#### Select elements in the set {e, f, g}
 ```{r, echo=TRUE}
-y[y %in% c("E", "F", "G")]
+y[y %in% c("e", "f", "g")]
 ```
 
 
@@ -224,15 +231,15 @@ y[y %in% c("E", "F", "G")]
 
 
 ```{r}
-which(y %in% c("E", "F", "G"))
+which(y %in% c("e", "f", "g"))
 
 ```
 
 We can get the same answer two differnt ways
 
 ```{r}
-y[y %in% c("E", "F", "G")]
-y[which(y %in% c("E", "F", "G"))]
+y[y %in% c("e", "f", "g")]
+y[which(y %in% c("e", "f", "g"))]
 
 ```
 
@@ -363,6 +370,15 @@ while (true condition){
 
 **CAUTION: don't get stuck in an endless loop! **
 
+Example of a `while` loop that will never end because the "true condition" is always true:
+
+```
+a <- 0
+while(1<2){
+  a <- a +1
+}
+```
+
 - if you do get stuck, put your cursor in your Console and press ESC or press the "Stop Sign" at the top right corner or the Console.
 
 
@@ -376,7 +392,38 @@ while (i < 5) {   # set the condition of the `while` loop
 }
 ```
 
+
 ---
+
+# Building loops 
+
+
+### `for` versus `while`
+
+- Do you know how many times you need to repeat? 
+  - yes: `for`
+  - no: `while`
+
+### Initalizing Memory
+
+- Do you know the dimensions of the object you want to store?
+  - yes: initialize the exact size. e.g. `a <- rep(0, 10)`
+  - no: initialize an empty object and expand it as needed. e.g. `a <- c()`. 
+  
+#### Advanced Side Note: 
+
+- When we initialize the exact size of an object, this is called static memory. 
+  - Inefficient in memory storage 
+  - Efficient for computation time on large objects
+  
+- When we initialize an empty object and expand it as needed, this is called dynamic memory. 
+  - Efficient in memory storage 
+  - Inefficient for computation time on large objects
+
+Here are some resources about memory usage in R:
+  - http://adv-r.had.co.nz/memory.html
+  
+
 
 # Programming with functions (that you build yourself!)
 
