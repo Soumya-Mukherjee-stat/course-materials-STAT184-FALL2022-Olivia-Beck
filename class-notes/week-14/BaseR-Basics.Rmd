@@ -177,10 +177,10 @@ We discussed using `[[ ]]` for lists in Week 10.
 
 #### A special case of a list where all elements are the same length.
 ```{r, echo=TRUE}
-letters <- c("A", "B", "C", "D", "E", "F")    # create a vector
+lets <- c("A", "B", "C", "D", "E", "F")    # create a vector
 numbers <- 1:6                                # create another vector
 
-df <- data.frame(numbers, letters)            # combine them as a data frame
+df <- data.frame(numbers, lets)            # combine them as a data frame
 df
 ```
 
