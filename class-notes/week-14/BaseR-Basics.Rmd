@@ -466,20 +466,6 @@ if (condition) {
 ```
 
 
-```{r}
-squared_better <- function(x) {       # the function will be called "squared" and takes one argument
-  if (!is.numeric(x)) {
-    print("error: This function requires a numeric argument")
-  } else {
-  calculation <- x * x         # this shows what the function will do with the `x` argument
-  return(calculation)          # this tells the function to display the result of `calculation`
-  }
-}
-
-squared_better("1")
-```
-
-
 
 ```{r, echo=TRUE}
 var <- 5           # some variable set to 5
@@ -491,6 +477,27 @@ if (var > 3) {     # if condition
 }
 
 ```
+
+
+#### Let's re-write our `squared` function with a fail-safe 
+
+
+```{r}
+squared_better <- function(x) {       # the function will be called "squared" and takes one argument
+  if (!is.numeric(x)) {
+    print("Error: This function requires a numeric argument!")
+  } else {
+  calculation <- x * x         # this shows what the function will do with the `x` argument
+  return(calculation)          # this tells the function to display the result of `calculation`
+  }
+}
+
+#squared("1")
+squared_better("1")
+
+```
+
+
 
 
 These `if` statements work well with other programming tools:  

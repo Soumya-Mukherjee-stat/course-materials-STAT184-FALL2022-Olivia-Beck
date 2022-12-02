@@ -9,21 +9,41 @@
 ## Question 1
 # Calculate the first 100 Fibonacci numbers
 
+fib <- rep(NA, 100)
 
+fib[1] <- 0
+fib[2] <- 1
+
+for(index in 3:100){
+  
+  fib[index] <- fib[index-1] + fib[index-2]
+}
 
 
 
 ## Question 2
 # Sum the first 20 Fibonacci numbers
 
+fib.sum20 <- 0
+for(index in 1:20){
+  fib.sum20 <- fib[index]  + fib.sum20
+}
 
+sum(fib[1:20])
 
 
 
 ## Question 3 
 # What is the first Fibbonacci number that is greater than 100
 
+index <- 1
+current.numb <- fib[index]
 
+while(current.numb < 100){
+  index <- index + 1
+  current.numb <- fib[index]
+}
+current.numb
 
 
 ## Question 4

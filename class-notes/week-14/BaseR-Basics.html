@@ -951,25 +951,28 @@ Syntax:</h4>
 } else {
   do something different
 }</code></pre>
-<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a>squared_better <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {       <span class="co"># the function will be called &quot;squared&quot; and takes one argument</span></span>
-<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.numeric</span>(x)) {</span>
-<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="st">&quot;error: This function requires a numeric argument&quot;</span>)</span>
-<span id="cb87-4"><a href="#cb87-4" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb87-5"><a href="#cb87-5" aria-hidden="true" tabindex="-1"></a>  calculation <span class="ot">&lt;-</span> x <span class="sc">*</span> x         <span class="co"># this shows what the function will do with the `x` argument</span></span>
-<span id="cb87-6"><a href="#cb87-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(calculation)          <span class="co"># this tells the function to display the result of `calculation`</span></span>
-<span id="cb87-7"><a href="#cb87-7" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb87-8"><a href="#cb87-8" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb87-9"><a href="#cb87-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb87-10"><a href="#cb87-10" aria-hidden="true" tabindex="-1"></a><span class="fu">squared_better</span>(<span class="st">&quot;1&quot;</span>)</span></code></pre></div>
-<pre><code>## [1] &quot;error: This function requires a numeric argument&quot;</code></pre>
-<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a>var <span class="ot">&lt;-</span> <span class="dv">5</span>           <span class="co"># some variable set to 5</span></span>
-<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb89-3"><a href="#cb89-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (var <span class="sc">&gt;</span> <span class="dv">3</span>) {     <span class="co"># if condition</span></span>
-<span id="cb89-4"><a href="#cb89-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="st">&#39;Yes&#39;</span>)     <span class="co"># do this if condition is satisfied</span></span>
-<span id="cb89-5"><a href="#cb89-5" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb89-6"><a href="#cb89-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="st">&#39;No&#39;</span>)      <span class="co"># do this if condition is NOT satisfied</span></span>
-<span id="cb89-7"><a href="#cb89-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a>var <span class="ot">&lt;-</span> <span class="dv">5</span>           <span class="co"># some variable set to 5</span></span>
+<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (var <span class="sc">&gt;</span> <span class="dv">3</span>) {     <span class="co"># if condition</span></span>
+<span id="cb87-4"><a href="#cb87-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="st">&#39;Yes&#39;</span>)     <span class="co"># do this if condition is satisfied</span></span>
+<span id="cb87-5"><a href="#cb87-5" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb87-6"><a href="#cb87-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="st">&#39;No&#39;</span>)      <span class="co"># do this if condition is NOT satisfied</span></span>
+<span id="cb87-7"><a href="#cb87-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <pre><code>## [1] &quot;Yes&quot;</code></pre>
+<h4 id="lets-re-write-our-squared-function-with-a-fail-safe">Let’s
+re-write our <code>squared</code> function with a fail-safe</h4>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a>squared_better <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {       <span class="co"># the function will be called &quot;squared&quot; and takes one argument</span></span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.numeric</span>(x)) {</span>
+<span id="cb89-3"><a href="#cb89-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="st">&quot;Error: This function requires a numeric argument!&quot;</span>)</span>
+<span id="cb89-4"><a href="#cb89-4" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb89-5"><a href="#cb89-5" aria-hidden="true" tabindex="-1"></a>  calculation <span class="ot">&lt;-</span> x <span class="sc">*</span> x         <span class="co"># this shows what the function will do with the `x` argument</span></span>
+<span id="cb89-6"><a href="#cb89-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(calculation)          <span class="co"># this tells the function to display the result of `calculation`</span></span>
+<span id="cb89-7"><a href="#cb89-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb89-8"><a href="#cb89-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb89-9"><a href="#cb89-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-10"><a href="#cb89-10" aria-hidden="true" tabindex="-1"></a><span class="co">#squared(&quot;1&quot;)</span></span>
+<span id="cb89-11"><a href="#cb89-11" aria-hidden="true" tabindex="-1"></a><span class="fu">squared_better</span>(<span class="st">&quot;1&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;Error: This function requires a numeric argument!&quot;</code></pre>
 <p>These <code>if</code> statements work well with other programming
 tools:</p>
 <ul>
