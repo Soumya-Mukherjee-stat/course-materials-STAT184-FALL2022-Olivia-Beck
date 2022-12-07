@@ -50,14 +50,33 @@ current.numb
 # Which of the first 100 Fibbonacci numbers are divisible by 4?
 
 
+div.by.4 <- c()
 
-
+for(i in 1:100){
+  current <- fib[i]
+  remainder <- current %% 4
+  if(remainder == 0){
+    div.by.4 <- c(div.by.4, current)
+  }
+  
+}
 
 ## Question 5
 # What are the 5 smallest Fibbonacci numbers that are divisible by 7? 
 
+div.by.7 <- c()
 
+i <- 1
 
+while(length(div.by.7) < 5) {
+  current <- fib[i]
+  remainder <- current %% 7
+  if(remainder == 0){
+    div.by.7 <- c(div.by.7, current)
+  }
+  
+  i <- i+1
+}
 
 
 
@@ -66,8 +85,47 @@ current.numb
 ## Function 1
 # Write a function that returns if a number is even or odd 
 
+even_or_odd <- function(num){
+  
+  if(!is.integer(num)){
+    return("Not an integer.")
+  }
+  
+  rem <- num %% 2
+  if(rem == 0){
+    return("Even")
+  }else{
+    return("Odd")
+  }
+  
+  
+}
 
+even_or_odd(100.25)
 
 
 ## Function 2
 # Write a function that returns the mean and standard deviation of a vector
+
+mean_sd <- function(vec){
+  
+  m <- sum(vec) / length(vec)
+  s <- stats::sd(vec)
+  
+  ret <- list(mean = m,
+              sd = s)
+  
+  return(ret)
+  
+}
+
+vec1 <- rnorm(100, mean = 8, sd = 2)
+
+mean_sd(vec1)
+
+
+
+
+
+
+
