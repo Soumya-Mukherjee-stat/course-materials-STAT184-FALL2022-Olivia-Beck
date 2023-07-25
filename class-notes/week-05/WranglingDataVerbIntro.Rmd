@@ -1,10 +1,9 @@
 ---
-title: "Week 5: Wrangling and Data Verbs"
-subtitle: "Data Computing Chapter 7"
+title: "Data Wrangling and Data Verbs"
 author: 
-  - Presenter- Olivia Beck 
-  - Content Credit- Dr. Matthew Beckman
-date: "Sep 21 2022"
+  - Instructor - Soumya Mukherjee
+  - Content Credit- Dr. Matthew Beckman and Olivia Beck
+date: "July 14, 2023"
 output: 
     slidy_presentation: default
     html_notebook: default
@@ -124,6 +123,59 @@ data("Minneapolis2013", package = "dcData")
 
 
 Click [here](https://en.wikipedia.org/wiki/Instant-runoff_voting) to learn about rank choice voting (also called instant run off voting). 
+
+## Additional practice
+
+- `CatsUK` data 
+    - Tidy Tuesday (Jan 31, 2023)
+    - URL: <https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-01-31/cats_uk_reference.csv>
+
+- `HELPmiss` 
+    - from `mosaicData` package
+
+```{r}
+# "Cat UK Reference" data from Tidy Tuesday--Jan 31, 2023
+
+csv_path <- 'https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-01-31/cats_uk_reference.csv'
+
+
+CatsUK <- read_csv(file = csv_path)  # note the new function `read_csv()` from `tidyverse`
+
+
+
+# HELP data
+library(mosaicData)
+
+data("HELPmiss", package = "mosaicData")
+
+```
+
+
+## Even more Datsets:
+
+| Data Frame         | Source R Library     |   
+|:-------------------|:---------------------|  
+| `HappyPlanetIndex` | `Lock5Data` library  |  
+| `Minneapolis2013`  | `dcData` library     |  
+| `CountryData`      | `dcData` library     |  
+| `EmployedACS`      | `Lock5Data` library  |  
+| `Marriage`         | `mosaicData` library |  
+
+
+### Discussion questions: 
+
+1. What is the setting for the data?  
+    - What are they about?
+    - Who collected them?
+    - Why were they collected?
+    - etc
+2. How many cases are there?
+3. In your own words, what kind of thing do the cases represent? 
+4. How many variables are there?  What are their names?
+5. Pick out three of the variables and say whether
+    - the variable is quantitative or categorical
+    - if categorical (R calls this a "factor"), what are some levels of the variable
+    - if quantitative, what are the units of measurement of the variable.
 
 ## Why we wrangle
 
@@ -394,4 +446,3 @@ world_bank_pop %>%
 # is the above table tidy? What is a case?
 
 ```
-

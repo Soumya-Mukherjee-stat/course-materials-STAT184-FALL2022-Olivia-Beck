@@ -145,3 +145,7 @@ Here's a video explanation if you want to watch the evolution:
 
 <https://youtu.be/QGTdEhUW0nE>
 
+## Additional Resources
+- <https://www.datacamp.com/tutorial/regex-r-regular-expressions-guide>
+- <https://github.com/rstudio/cheatsheets/blob/main/strings.pdf>
+

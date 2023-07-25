@@ -35,14 +35,14 @@ Q: What IS different?
 Q: What is NOT different?
 
 Table 1: 
-```{r echo=FALSE}
+```{r}
 example_eagle_nests
 ```
 
 
 Table 2: 
 
-```{r echo=FALSE}
+```{r}
 example_eagle_nests_tidy
 ```
 
